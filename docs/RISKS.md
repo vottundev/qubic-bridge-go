@@ -3,6 +3,8 @@
 ## Abstract
 The purpose of this document is to outline potential risks and dependencies for the development of the Vottun Qubic Bridge, including mitigation strategies and responsible parties.
 
+**The document is 'live' and will be updated in the coming days as new dependencies or risks are discovered, so check back regularly for updates.**
+
 ---
 
 ## Risks
