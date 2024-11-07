@@ -1,0 +1,81 @@
+service-id: 8
+http:
+  route: /qubicbridge/v1
+cors: 
+  allowed-origins:  
+    - "http://localhost:4200"
+    - "https://localhost:4200"
+  allowed-methods: 
+    - "GET"
+    - "POST"
+    - "OPTIONS"
+    - "DELETE"
+    - "PUT"
+  allowed-headers: 
+    - "*"
+evm:
+  infura-key: ENC(a867f50be7703c5f04b3789015ee261f14ea17aa715d4e09798cce01652d418f60db6b5890087640ff99c1a27294a139e877807057a04460aa48b0da57888ced924591199e574df6)
+  chains:
+    ETH:
+      chain-id: 11155111
+      name: Ethereum Sepolia
+      rpc: https://sepolia.infura.io/v3/
+      wss: wss://sepolia.infura.io/ws/v3/
+    ARB:
+      chain-id: 421614
+      name: Arbitrum Sepolia
+      rpc: https://arbitrum-sepolia.infura.io/v3/
+      wss: wss://arbitrum-sepolia.infura.io/ws/v3/
+mysql:
+  host: sec-jwt.c8fzokzbco4u.eu-central-1.rds.amazonaws.com
+  port: 3306
+  user: core_token
+  password: ENC(e385b527bc5eec57d3552afddab2846566201c90a5a23500ffcf658de0fc6035cc2c193d0d8f9c1540f34b7177207035d583f46a)
+  database: app_dojo_vottun_int
+  timeout: 100
+  max-open-conns: 3
+  max-idle-conns: 1
+  page-max-rows-default: 25
+  page-max-rows-limit: 100
+  jwt:
+    user: core_token
+    password: ENC(e385b527bc5eec57d3552afddab2846566201c90a5a23500ffcf658de0fc6035cc2c193d0d8f9c1540f34b7177207035d583f46a)
+    database: core_auth_int
+    timeout: 10
+cache:
+  connections:
+    internal:
+      host: localhost
+      port: 6379
+      expiration: 5
+      database: 13
+    qubic:
+      host: localhost
+      port: 6379
+      expiration: 5
+      database: 13  
+  qubic-events-channel: qubic-channel
+telegram:
+  bot-url: http://localhost:2216/vottundojobot/v1/
+  enable-bot: false
+  #token: ENC(e026db4fd568a57a3f5b094e7dd4b552ed453ca6f0d52af117d82c5d7b13abd5150ba8f18046dc47feb40bb165c136bec6b344abc53e8ed0c1e036a39943b6d36623f3df1a44ddf7fde598930efb721602239b9e1eb1)
+  #token lemon
+  token: ENC(cfddd639555a4a097e054dcda41fe4743af203282919cc51b62cb197a065997c4d293177fb86aeb879c683ef9216b2d7a3b52c6109d4e505cd67864af87984a1ebc7de0046a0e1126f6c8da117a8884c5f7fb045963a)
+  # bot victor 
+  #token: ENC(b371863e8696a1e6a78f99efc65b000cb43dfa9bd6414ee082dbd2a40dd99297feb42cdcbad1b1a064358e7b0495259684e2b7d245bfc8875e98d879b89f124b693fa4ba11b6a9473b7e6f7455491f10648c2f46f8c0)
+  init-data-expiration-seconds: 84600
+  admins-allowed: 
+    - 1087968824
+urls:
+  images: https://dojo-int.vottun.tech/images/
+  images-s3: https://img.vottun.tech/6b1befd5-fb7d-41d0-a2ae-fae7a10f6504/
+game:
+  energy-per-second: 3
+  max-user-level: 10
+  referral-prefix: dojotg
+queue:
+  active: true
+  bot-send-messages: "https://sqs.eu-west-1.amazonaws.com/852224914118/dev-telegram-bot-send"
+  region: "eu-west-1"
+  profile: "prof-dev-alex"
+  delay-seconds : 0
