@@ -41,7 +41,7 @@ func Start() error {
 
 	log.Infoln("Qubic Redis Client started")
 
-	subscribeToQubicEvens(ctx)
+	go subscribeToQubicEvens(ctx)
 
 	log.Infoln("Qubic redis pubsub subscribed")
 
@@ -114,11 +114,11 @@ func subscribeToQubicEvens(ctx context.Context) {
 			select {
 			case <-ctx.Done():
 				// If the context is done, exit the loop
-				fmt.Println("Context done, stopping subscription.")
+				log.Infoln("Context done, stopping subscription.")
 				return
 			case msg := <-channel:
 				// Handle incoming messages
-				fmt.Printf("Received message: %s from channel: %s\n", msg.Payload, msg.Channel)
+				log.Tracef("Received message: %s from channel: %s\n", msg.Payload, msg.Channel)
 			}
 		}
 	}

@@ -16,6 +16,13 @@ import (
 	"github.com/vottundev/vottun-qubic-bridge-go/utils/log"
 )
 
+type ExecutionType string
+
+const (
+	EXECUTION_TYPE_BRIDGE     ExecutionType = "bridge"
+	EXECUTION_TYPE_DISPATCHER ExecutionType = "dispatcher"
+)
+
 type Arguments struct {
 	Secret    string            `conf:"env:SECRET,required"`
 	YamlFile  string            `conf:"flag:yaml,short:y,required"`
@@ -25,20 +32,44 @@ type Arguments struct {
 	LogLevel  log.LogLevelValue `conf:"default:INFO,flag:loglevel,short:l"`
 }
 
+type ExecutionArgument struct {
+	Execution ExecutionType `conf:"flag:launch,short:u,default:bridge"`
+}
+
 var (
-	args    *Arguments
-	sigterm chan bool
+	args         *Arguments
+	execArgument *ExecutionArgument
+	sigterm      chan bool
+	cancel       context.CancelFunc
 )
 
 func main() {
+	config.ExecutionTime = time.Now()
+
+	execArgument = &ExecutionArgument{}
+
+	//check for execution argument to start app as bridge or redis dispatcher
+	if err := conf.Parse(os.Args[1:], "BRIDGE", execArgument); err != nil {
+		log.Panic(err)
+	}
+
+	_, cancel = context.WithCancel(context.Background())
+
+	switch execArgument.Execution {
+	case EXECUTION_TYPE_BRIDGE:
+		mainBridge()
+	}
+}
+
+func mainBridge() {
+	parseBridgeArguments()
+
 	log.Infoln("Starting Cache")
 	cache.Start()
 
 	go controller.SetupRestServer(args.Port)
 
 	log.Infoln("Telegram Vottun Dojo Up'n'Ready.")
-
-	_, cancel := context.WithCancel(context.Background())
 
 	handleSigTerm()
 
@@ -51,13 +82,10 @@ func main() {
 	}
 }
 
-func init() {
-
-	config.ExecutionTime = time.Now()
-
+func parseBridgeArguments() {
 	args = &Arguments{}
 
-	if err := conf.Parse(os.Args[1:], "BRIDGE", &args); err != nil {
+	if err := conf.Parse(os.Args[1:], "BRIDGE", args); err != nil {
 		log.Panic(err)
 	}
 
