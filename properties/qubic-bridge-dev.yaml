@@ -1,6 +1,7 @@
 service-id: 8
 http:
   route: /qubicbridge/v1
+  route-internal: /internalbridge/v1
 cors: 
   allowed-origins:  
     - "http://localhost:4200"

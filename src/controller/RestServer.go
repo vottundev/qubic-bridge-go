@@ -6,6 +6,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/rs/cors"
 	"github.com/vottundev/vottun-qubic-bridge-go/config"
+	"github.com/vottundev/vottun-qubic-bridge-go/controller/interceptor"
 	"github.com/vottundev/vottun-qubic-bridge-go/utils/log"
 	"github.com/vottundev/vottun-qubic-bridge-go/utils/net"
 )
@@ -13,6 +14,7 @@ import (
 var (
 	httpRouter *mux.Router
 	httpPort   string
+	httpServer *http.Server
 )
 
 // MiddlewareHandlerFunc builds on top of http.HandlerFunc, and exposes API to intercept with MiddlewareInterceptor.
@@ -33,38 +35,47 @@ func prepareCors(router *mux.Router) http.Handler {
 
 func SetupRestServer(port string) {
 
+	var err error
+
 	httpRouter = mux.NewRouter()
 	httpPort = port
 
 	httpRouter.Path(config.Config.Http.Route + "/ping").Methods(http.MethodGet).HandlerFunc(http.HandlerFunc(MiddlewareHandlerFunc(IsAlive)))
 
-	log.Infof("Telegram Vottun Dojo service Listening on port %s", port)
+	log.Infof("Vottun Qubic Public service Listening on port %s", port)
+
+	httpRouter.Use(interceptor.NewElapsedTimeInterceptor())
 
 	if log.LogLevel <= log.DEBUG {
-		log.Fatal(net.ListenAndServe(
+		httpServer, err = net.ListenAndServe(
 			net.ListenAndServeInfo{
 				Ipversion: net.IPV4,
 				Address:   "0.0.0.0:" + port,
 				Handler:   prepareCors(httpRouter),
-			}))
+			})
 	} else {
-		log.Fatal(net.ListenAndServe(
+		httpServer, err = net.ListenAndServe(
 			net.ListenAndServeInfo{
 				Ipversion:    net.IPV4,
 				Address:      "0.0.0.0:" + port,
 				Handler:      prepareCors(httpRouter),
-				WriteTimeout: 15,
+				WriteTimeout: 30,
 				ReadTimeout:  15,
 				IdleTimeout:  60,
-			}))
+			})
+	}
+
+	if err != nil {
+		log.Errorf("failed starting public http server: %+v", err)
+		panic(err)
 	}
 }
 func RestartServer() {
 
-	ShutdownHttpServer("Requested restart from admin")
+	ShutdownHttpServer("Requested public http server restart from admin")
 	SetupRestServer(httpPort)
 }
 
 func ShutdownHttpServer(reason string) {
-	net.ShutDown(reason)
+	net.ShutDown(httpServer, reason)
 }

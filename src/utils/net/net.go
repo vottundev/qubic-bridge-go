@@ -19,8 +19,6 @@ const (
 	IPV6 IPV = "tcp6"
 )
 
-var httpServer *http.Server
-
 // A ListenAndServeInfo defines parameters for running the HTTP server.
 // The zero value for Server is a valid configuration.
 type ListenAndServeInfo struct {
@@ -52,9 +50,9 @@ type ListenAndServeInfo struct {
 	IdleTimeout time.Duration
 }
 
-func ListenAndServe(l ListenAndServeInfo) error {
+func ListenAndServe(l ListenAndServeInfo) (*http.Server, error) {
 
-	httpServer = &http.Server{
+	httpServer := &http.Server{
 		Addr:         l.Address,
 		WriteTimeout: time.Second * l.WriteTimeout,
 		ReadTimeout:  time.Second * l.ReadTimeout,
@@ -68,13 +66,13 @@ func ListenAndServe(l ListenAndServeInfo) error {
 	}
 	ln, err := net.Listen(string(l.Ipversion), addr)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	return httpServer.Serve(ln)
+	return httpServer, httpServer.Serve(ln)
 }
 
-func ShutDown(reason string) {
+func ShutDown(httpServer *http.Server, reason string) {
 	if len(strings.TrimSpace(reason)) == 0 {
 		log.Print("Http server going down by request")
 	} else {

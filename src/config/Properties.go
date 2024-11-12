@@ -35,8 +35,9 @@ type CacheInfo struct {
 type config struct {
 	ServiceID uint64 `yaml:"service-id"`
 	Http      struct {
-		Route string `yaml:"route"`
-		Port  uint16 `yaml:"port"`
+		Route         string `yaml:"route"`
+		InternalRoute string `yaml:"route-internal"`
+		Port          uint16 `yaml:"port"`
 	}
 	Cors struct {
 		AllowedOrigins []string `yaml:"allowed-origins"`
@@ -47,6 +48,9 @@ type config struct {
 		InfuraKey string    `yaml:"infura-key"`
 		Chains    ChainsMap `yaml:"chains"`
 	} `yaml:"evm"`
+	InternalEndpoints struct {
+		ProcessOrder string `yaml:"process-order"`
+	} `yaml:"internal-endpoints"`
 	Jwt struct {
 		PublicKey             string `yaml:"public-key"`
 		PrivateKey            string `yaml:"private-key"`
@@ -55,10 +59,10 @@ type config struct {
 	} `yaml:"jwt"`
 	MySQL struct {
 		Host               string `yaml:"host"`
-		Port               uint16 `yaml:"port"`
 		User               string `yaml:"user"`
 		Password           string `yaml:"password"`
 		DatabaseName       string `yaml:"database"`
+		Port               uint16 `yaml:"port"`
 		Timeout            uint16 `yaml:"timeout"`
 		PageMaxRowsDefault uint32 `yaml:"page-max-rows-default"`
 		PageMaxRowsLimit   uint32 `yaml:"page-max-rows-limit"`

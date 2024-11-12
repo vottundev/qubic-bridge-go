@@ -1,0 +1,15 @@
+internal-endpoints:
+  process-order: http://localhost:2126/internalbridge/v1/order
+cache:
+  connections:
+    internal:
+      host: localhost
+      port: 6379
+      expiration: 5
+      database: 13
+    qubic:
+      host: localhost
+      port: 6379
+      expiration: 5
+      database: 13  
+  qubic-events-channel: qubic-channel

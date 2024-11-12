@@ -13,6 +13,7 @@ import (
 	"github.com/vottundev/vottun-qubic-bridge-go/cache"
 	"github.com/vottundev/vottun-qubic-bridge-go/config"
 	"github.com/vottundev/vottun-qubic-bridge-go/controller"
+	"github.com/vottundev/vottun-qubic-bridge-go/dto"
 	"github.com/vottundev/vottun-qubic-bridge-go/utils/log"
 )
 
@@ -24,12 +25,13 @@ const (
 )
 
 type Arguments struct {
-	Secret    string            `conf:"env:SECRET,required"`
-	YamlFile  string            `conf:"flag:yaml,short:y,required"`
-	LogStdout bool              `conf:"flag:logstdout,short:s"`
-	LogFile   *string           `conf:"flag:logfile,short:f"`
-	Port      string            `conf:"flag:port,short:p"`
-	LogLevel  log.LogLevelValue `conf:"default:INFO,flag:loglevel,short:l"`
+	Secret       string            `conf:"env:SECRET,required"`
+	YamlFile     string            `conf:"flag:yaml,short:y,required"`
+	LogStdout    bool              `conf:"flag:logstdout,short:s"`
+	LogFile      *string           `conf:"flag:logfile,short:f"`
+	Port         string            `conf:"flag:port,short:p"`
+	InternalPort string            `conf:"flag:internalport,short:i"`
+	LogLevel     log.LogLevelValue `conf:"default:INFO,flag:loglevel,short:l"`
 }
 
 type ExecutionArgument struct {
@@ -44,6 +46,7 @@ var (
 )
 
 func main() {
+	fmt.Println("Starting")
 	config.ExecutionTime = time.Now()
 
 	execArgument = &ExecutionArgument{}
@@ -58,28 +61,53 @@ func main() {
 	switch execArgument.Execution {
 	case EXECUTION_TYPE_BRIDGE:
 		mainBridge()
+	case EXECUTION_TYPE_DISPATCHER:
+		mainDispatcher()
 	}
-}
-
-func mainBridge() {
-	parseBridgeArguments()
-
-	log.Infoln("Starting Cache")
-	cache.Start()
-
-	go controller.SetupRestServer(args.Port)
-
-	log.Infoln("Telegram Vottun Dojo Up'n'Ready.")
-
 	handleSigTerm()
+
+	order := dto.OrderReceivedDTO{
+		OrderID:            "DDe32Daqe444b98qwEhfI",
+		OriginChain:        0,
+		OriginAccount:      "AAAAAAAAAAAAAAAAAAAAAA",
+		DestinationAccount: "0x123412341341",
+		Amount:             "3456789",
+		Memo:               "this is the memo",
+	}
+
+	b, _ := json.Marshal(order)
+
+	fmt.Printf("%s", string(b))
 
 	receivedSigterm := <-sigterm
 	if receivedSigterm {
 		log.Infoln("Sigterm arrived. Shut down")
 		controller.ShutdownHttpServer("SigTerm Received")
+		controller.ShutdownInternalHttpServer("SigTerm received")
 		cache.StopRedisClients()
 		cancel()
 	}
+}
+
+func mainDispatcher() {
+	log.Infof("Begin service as Dispatcher")
+	parseBridgeArguments()
+
+	log.Infoln("Starting Cache")
+	cache.Start(false)
+}
+func mainBridge() {
+	log.Infof("Begin service as Bridge")
+	parseBridgeArguments()
+
+	log.Infoln("Starting Cache")
+	cache.Start(true)
+
+	go controller.SetupRestServer(args.Port)
+	go controller.SetupInternalRestServer(args.InternalPort)
+
+	log.Infoln("Telegram Vottun Dojo Up'n'Ready.")
+
 }
 
 func parseBridgeArguments() {

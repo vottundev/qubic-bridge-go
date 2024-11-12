@@ -22,7 +22,7 @@ func RedisClient() *redis.Client {
 	return redisClient
 }
 
-func Start() error {
+func Start(isBridge bool) error {
 
 	var err error
 
@@ -31,9 +31,12 @@ func Start() error {
 		log.Errorf("%+v", err)
 		return err
 	}
+	if isBridge {
+		log.Infof("Internal Redis Client started as bridge. ")
+	} else {
+		log.Infof("Internal Redis Client started as dispatcher. ")
 
-	log.Infoln("Internal Redis Client started")
-
+	}
 	if qubicRedisClient, err = newRedisClient(config.Config.Cache.Connections["qubic"]); err != nil {
 		log.Errorf("%+v", err)
 		return err
@@ -41,10 +44,11 @@ func Start() error {
 
 	log.Infoln("Qubic Redis Client started")
 
-	go subscribeToQubicEvens(ctx)
+	if !isBridge {
+		go subscribeToQubicEvens(ctx)
 
-	log.Infoln("Qubic redis pubsub subscribed")
-
+		log.Infoln("Qubic redis pubsub subscribed")
+	}
 	return nil
 }
 
