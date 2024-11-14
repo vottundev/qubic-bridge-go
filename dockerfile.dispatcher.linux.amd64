@@ -1,0 +1,34 @@
+# Etapa 1: Compilar la aplicación
+FROM golang:1.22.5-alpine AS builder
+
+# Establecer el directorio de trabajo
+WORKDIR /app
+
+# Copiar el código de la aplicación
+COPY ./src .
+
+# Compilar la aplicación
+RUN go mod download
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o qubic-dispatcher .
+
+# Etapa 2: Crear la imagen final
+FROM alpine:latest
+
+# Establecer variables de entorno para configuración
+# ENV PORT=8080
+ENV PROPERTIES_DIR=/opt/dispatcher/properties
+ENV BRIDGE_SECRET=${SECRET}
+# Crear los directorios para las properties y claves
+RUN mkdir -p /opt/bitsbuster/properties
+
+# Copiar la aplicación compilada desde el builder
+COPY --from=builder /app/qubic-dispatcher /app/qubic-dispatcher
+
+# Copiar los archivos de properties y claves al contenedor
+COPY ./properties/qubic-dispatcher-docker-dev.yaml /opt/qubic-dispatcher/properties/qubic-dispatcher-docker-dev.yaml
+
+# Exponer el puerto en el que escucha la aplicación
+# EXPOSE 8080
+
+# Ejecutar la aplicación
+CMD ["/app/qubic-dispatcher", "--yaml=/opt/qubic-dispatcher/properties/qubic-dispatcher-docker-dev.yaml", "-l=TRACE", "-s=true", "--launch=dispatcher"]

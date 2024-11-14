@@ -1,16 +1,16 @@
 internal-endpoints:
-  host: http://localhost:2126/internalbridge/v1
+  host: http://host.docker.internal:2126/internalbridge/v1
   process-order: /order
 cache:
   connections:
     internal:
-      host: localhost
+      host: redis-dev
       port: 6379
       expiration: 5
-      database: 2
+      database: 1
     qubic:
-      host: localhost
+      host: redis-dev
       port: 6379
       expiration: 5
-      database: 2  
+      database: 1  
   qubic-events-channel: qubic-channel

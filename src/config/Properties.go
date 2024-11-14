@@ -49,6 +49,7 @@ type config struct {
 		Chains    ChainsMap `yaml:"chains"`
 	} `yaml:"evm"`
 	InternalEndpoints struct {
+		Host         string `yaml:"host"`
 		ProcessOrder string `yaml:"process-order"`
 	} `yaml:"internal-endpoints"`
 	Jwt struct {
@@ -79,22 +80,6 @@ type config struct {
 		Connections        map[string]CacheInfo `yaml:"connections"`
 		QubicEventsChannel string               `yaml:"qubic-events-channel"`
 	} `yaml:"cache"`
-	Telegram struct {
-		BotUrl                    string  `yaml:"bot-url"`
-		EnableBot                 bool    `yaml:"enable-bot"`
-		Token                     string  `yaml:"token"`
-		InitDataExpirationSeconds uint64  `yaml:"init-data-expiration-seconds"`
-		AdminsAllowed             []int64 `yaml:"admins-allowed"`
-	} `yaml:"telegram"`
-	Urls struct {
-		Images   string `yaml:"images"`
-		ImagesS3 string `yaml:"images-s3"`
-	} `yaml:"urls"`
-	Game struct {
-		EnergyPerSecond uint8  `yaml:"energy-per-second"`
-		MaxUserLevel    uint64 `yaml:"max-user-level"`
-		ReferralPrefix  string `yaml:"referral-prefix"`
-	} `yaml:"game"`
 	Queue struct {
 		Active          bool   `yaml:"active"`
 		BotSendMessages string `yaml:"bot-send-messages"`

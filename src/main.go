@@ -13,6 +13,7 @@ import (
 	"github.com/vottundev/vottun-qubic-bridge-go/cache"
 	"github.com/vottundev/vottun-qubic-bridge-go/config"
 	"github.com/vottundev/vottun-qubic-bridge-go/controller"
+	"github.com/vottundev/vottun-qubic-bridge-go/dispatcher"
 	"github.com/vottundev/vottun-qubic-bridge-go/dto"
 	"github.com/vottundev/vottun-qubic-bridge-go/utils/log"
 )
@@ -68,14 +69,18 @@ func main() {
 
 	order := dto.OrderReceivedDTO{
 		OrderID:            "DDe32Daqe444b98qwEhfI",
-		OriginChain:        0,
+		SourceChain:        0,
 		OriginAccount:      "AAAAAAAAAAAAAAAAAAAAAA",
 		DestinationAccount: "0x123412341341",
 		Amount:             "3456789",
 		Memo:               "this is the memo",
 	}
 
-	b, _ := json.Marshal(order)
+	p := map[string]interface{}{
+		"eventType": dto.NEW_ORDER,
+		"payload":   order,
+	}
+	b, _ := json.Marshal(p)
 
 	fmt.Printf("%s", string(b))
 
@@ -94,14 +99,14 @@ func mainDispatcher() {
 	parseBridgeArguments()
 
 	log.Infoln("Starting Cache")
-	cache.Start(false)
+	cache.Start(false, dispatcher.PubSubHandler)
 }
 func mainBridge() {
 	log.Infof("Begin service as Bridge")
 	parseBridgeArguments()
 
 	log.Infoln("Starting Cache")
-	cache.Start(true)
+	cache.Start(true, nil)
 
 	go controller.SetupRestServer(args.Port)
 	go controller.SetupInternalRestServer(args.InternalPort)
