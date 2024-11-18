@@ -1,6 +1,8 @@
 internal-endpoints:
   host: http://host.docker.internal:2126/internalbridge/v1
   process-order: /order
+grpc:
+  server: host.docker.internal
 cache:
   connections:
     internal:

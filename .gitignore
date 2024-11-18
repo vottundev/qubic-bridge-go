@@ -7,3 +7,5 @@ src/__debug_bin*
 
 
 .vscode/
+
+qubic-dispatcher

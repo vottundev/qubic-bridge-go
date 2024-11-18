@@ -15,6 +15,7 @@ import (
 	"github.com/vottundev/vottun-qubic-bridge-go/controller"
 	"github.com/vottundev/vottun-qubic-bridge-go/dispatcher"
 	"github.com/vottundev/vottun-qubic-bridge-go/dto"
+	"github.com/vottundev/vottun-qubic-bridge-go/grpc"
 	"github.com/vottundev/vottun-qubic-bridge-go/utils/log"
 )
 
@@ -26,13 +27,14 @@ const (
 )
 
 type Arguments struct {
-	Secret       string            `conf:"env:SECRET,required"`
-	YamlFile     string            `conf:"flag:yaml,short:y,required"`
-	LogStdout    bool              `conf:"flag:logstdout,short:s"`
-	LogFile      *string           `conf:"flag:logfile,short:f"`
-	Port         string            `conf:"flag:port,short:p"`
-	InternalPort string            `conf:"flag:internalport,short:i"`
-	LogLevel     log.LogLevelValue `conf:"default:INFO,flag:loglevel,short:l"`
+	Secret         string            `conf:"env:SECRET,required"`
+	YamlFile       string            `conf:"flag:yaml,short:y,required"`
+	LogStdout      bool              `conf:"flag:logstdout,short:s"`
+	LogFile        *string           `conf:"flag:logfile,short:f"`
+	Port           string            `conf:"flag:port,short:p"`
+	InternalPort   string            `conf:"flag:internalport,short:i"`
+	GrpcServerPort uint16            `conf:"default:50551,flag:grpc-server-port"`
+	LogLevel       log.LogLevelValue `conf:"default:INFO,flag:loglevel,short:l"`
 }
 
 type ExecutionArgument struct {
@@ -87,8 +89,13 @@ func main() {
 	receivedSigterm := <-sigterm
 	if receivedSigterm {
 		log.Infoln("Sigterm arrived. Shut down")
-		controller.ShutdownHttpServer("SigTerm Received")
-		controller.ShutdownInternalHttpServer("SigTerm received")
+		if execArgument.Execution == EXECUTION_TYPE_BRIDGE {
+			controller.ShutdownHttpServer("SigTerm Received")
+			controller.ShutdownInternalHttpServer("SigTerm received")
+			grpc.StopGrpcServer()
+		} else if execArgument.Execution == EXECUTION_TYPE_DISPATCHER {
+			grpc.StopGrprClientConnection()
+		}
 		cache.StopRedisClients()
 		cancel()
 	}
@@ -100,6 +107,7 @@ func mainDispatcher() {
 
 	log.Infoln("Starting Cache")
 	cache.Start(false, dispatcher.PubSubHandler)
+	go grpc.StartGrpcClientConnection(args.GrpcServerPort)
 }
 func mainBridge() {
 	log.Infof("Begin service as Bridge")
@@ -112,6 +120,7 @@ func mainBridge() {
 	go controller.SetupInternalRestServer(args.InternalPort)
 
 	log.Infoln("Telegram Vottun Dojo Up'n'Ready.")
+	go grpc.StartGrpcServer(args.GrpcServerPort)
 
 }
 

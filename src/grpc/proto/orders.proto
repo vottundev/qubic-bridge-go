@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+option go_package = "github.com/vottundev/vottun-qubic-bridge-go/grpc/proto";
+
+package proto;
+
+service RemoteService {
+  rpc ProcessQubicOrder(ProcessOrderRequest) returns (ProcessOrderResponse) {}
+}
+
+message ProcessOrderRequest {
+  string OrderID = 1;        
+	string OriginAccount = 2;     
+	string DestinationAccount = 3; 
+	string Amount = 4; 
+	string Memo = 5;           
+	uint32 SourceChain = 6;
+}
+
+
+message ProcessOrderResponse {
+  bool message = 1;
+}

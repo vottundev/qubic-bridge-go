@@ -6,6 +6,7 @@ import (
 
 	"github.com/vottundev/vottun-qubic-bridge-go/config"
 	"github.com/vottundev/vottun-qubic-bridge-go/dto"
+	"github.com/vottundev/vottun-qubic-bridge-go/grpc"
 	"github.com/vottundev/vottun-qubic-bridge-go/utils/log"
 )
 
@@ -27,7 +28,8 @@ func PubSubHandler(channel string, payload string) {
 			log.Errorf("failed unmarshaling order: %+v", err)
 			return
 		}
-		DispatchOrderForProcessing(order)
+		// DispatchOrderForProcessing(order)
+		grpc.ProcessQubicOrder(order)
 	case dto.CONFIRM_ORDER:
 	}
 }

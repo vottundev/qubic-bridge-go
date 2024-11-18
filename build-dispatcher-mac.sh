@@ -29,4 +29,4 @@ else
   exit 1
 fi
 
-docker run --name bridge-dispatcher-dev --network bridge-network-dev -e SECRET=$SECRET -d vottun/bridge-dispatcher/mac-arm64
+docker run --name bridge-dispatcher-dev --network bridge-network-dev --restart unless-stopped -e SECRET=$SECRET -d vottun/bridge-dispatcher/mac-arm64

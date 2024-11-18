@@ -87,6 +87,9 @@ type config struct {
 		Region          string `yaml:"region"`
 		DelaySeconds    int64  `yaml:"delay-seconds"`
 	} `yaml:"queue"`
+	Grpc struct {
+		Server string `yaml:"server"`
+	} `yaml:"grpc"`
 }
 
 // type vtnConfig struct {

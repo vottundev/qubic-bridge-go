@@ -1,6 +1,8 @@
 internal-endpoints:
   host: http://localhost:2126/internalbridge/v1
   process-order: /order
+grpc:
+  server: localhost
 cache:
   connections:
     internal:
