@@ -4,6 +4,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/ethereum/go-ethereum/common"
 	"github.com/vottundev/vottun-qubic-bridge-go/utils/crypto"
 	"github.com/vottundev/vottun-qubic-bridge-go/utils/log"
 
@@ -20,10 +21,11 @@ const (
 type ChainsMap map[ChainType]ChainInfo
 
 type ChainInfo struct {
-	ChainID uint32 `yaml:"chain-id"`
-	Name    string `yaml:"name"`
-	RpcUrl  string `yaml:"rpc"`
-	WssUrl  string `yaml:"wss"`
+	ChainID         uint32          `yaml:"chain-id"`
+	Name            string          `yaml:"name"`
+	RpcUrl          string          `yaml:"rpc"`
+	WssUrl          string          `yaml:"wss"`
+	ContractAddress *common.Address `yaml:"contract-address"`
 }
 
 type CacheInfo struct {
@@ -48,10 +50,6 @@ type config struct {
 		InfuraKey string    `yaml:"infura-key"`
 		Chains    ChainsMap `yaml:"chains"`
 	} `yaml:"evm"`
-	InternalEndpoints struct {
-		Host         string `yaml:"host"`
-		ProcessOrder string `yaml:"process-order"`
-	} `yaml:"internal-endpoints"`
 	Jwt struct {
 		PublicKey             string `yaml:"public-key"`
 		PrivateKey            string `yaml:"private-key"`

@@ -9,12 +9,10 @@ service RemoteService {
 }
 
 message ProcessOrderRequest {
-  string OrderID = 1;        
+    uint64 OrderID = 1;        
 	string OriginAccount = 2;     
 	string DestinationAccount = 3; 
 	string Amount = 4; 
-	string Memo = 5;           
-	uint32 SourceChain = 6;
 }
 
 

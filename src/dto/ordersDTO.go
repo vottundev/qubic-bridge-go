@@ -11,12 +11,12 @@ const (
 )
 
 type OrderReceivedDTO struct {
-	OrderID            string `json:"orderId"`
+	OrderID            uint64 `json:"orderId"`
 	OriginAccount      string `json:"originAccount"`
 	DestinationAccount string `json:"destinationAccount"`
 	Amount             string `json:"amount"`
-	Memo               string `json:"memo"`
-	SourceChain        uint32 `json:"sourceChain"`
+	// Memo               string `json:"memo"`
+	SourceChain uint32 `json:"sourceChain"`
 }
 
 type RedisPubSubDTO struct {

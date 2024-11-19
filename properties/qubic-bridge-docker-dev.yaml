@@ -1,0 +1,59 @@
+service-id: 8
+http:
+  route: /qubicbridge/v1
+  route-internal: /internalbridge/v1
+cors: 
+  allowed-origins:  
+    - "http://localhost:4200"
+    - "https://localhost:4200"
+  allowed-methods: 
+    - "GET"
+    - "POST"
+    - "OPTIONS"
+    - "DELETE"
+    - "PUT"
+  allowed-headers: 
+    - "*"
+evm:
+  infura-key: ENC(a867f50be7703c5f04b3789015ee261f14ea17aa715d4e09798cce01652d418f60db6b5890087640ff99c1a27294a139e877807057a04460aa48b0da57888ced924591199e574df6)
+  chains:
+    ETH:
+      chain-id: 11155111
+      name: Ethereum Sepolia
+      rpc: https://sepolia.infura.io/v3/
+      wss: wss://sepolia.infura.io/ws/v3/
+    ARB:
+      chain-id: 421614
+      name: Arbitrum Sepolia
+      rpc: https://arbitrum-sepolia.infura.io/v3/
+      wss: wss://arbitrum-sepolia.infura.io/ws/v3/
+mysql:
+  host: localhost
+  port: 3306
+  user: alopez
+  password: ENC(3bcf65fe725eaf6d1480602b4a298485ad4d77be33e37494976d136da1388d004638746812334f16a666f77cff443efd)
+  database: app_bridge_qubic_local
+  timeout: 100
+  max-open-conns: 3
+  max-idle-conns: 1
+  page-max-rows-default: 25
+  page-max-rows-limit: 100
+cache:
+  connections:
+    internal:
+      host: redis-dev
+      port: 6379
+      expiration: 5
+      database: 13
+    qubic:
+      host: redis-dev
+      port: 6379
+      expiration: 5
+      database: 13  
+  qubic-events-channel: qubic-channel
+queue:
+  active: true
+  bot-send-messages: "https://sqs.eu-west-1.amazonaws.com/852224914118/dev-telegram-bot-send"
+  region: "eu-west-1"
+  profile: "prof-dev-alex"
+  delay-seconds : 0

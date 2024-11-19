@@ -14,6 +14,7 @@ import (
 	"github.com/vottundev/vottun-qubic-bridge-go/config"
 	"github.com/vottundev/vottun-qubic-bridge-go/controller"
 	"github.com/vottundev/vottun-qubic-bridge-go/dispatcher"
+	"github.com/vottundev/vottun-qubic-bridge-go/dispatcher/evm"
 	"github.com/vottundev/vottun-qubic-bridge-go/dto"
 	"github.com/vottundev/vottun-qubic-bridge-go/grpc"
 	"github.com/vottundev/vottun-qubic-bridge-go/utils/log"
@@ -70,12 +71,10 @@ func main() {
 	handleSigTerm()
 
 	order := dto.OrderReceivedDTO{
-		OrderID:            "DDe32Daqe444b98qwEhfI",
-		SourceChain:        0,
+		OrderID:            1,
 		OriginAccount:      "AAAAAAAAAAAAAAAAAAAAAA",
 		DestinationAccount: "0x123412341341",
 		Amount:             "3456789",
-		Memo:               "this is the memo",
 	}
 
 	p := map[string]interface{}{
@@ -91,7 +90,6 @@ func main() {
 		log.Infoln("Sigterm arrived. Shut down")
 		if execArgument.Execution == EXECUTION_TYPE_BRIDGE {
 			controller.ShutdownHttpServer("SigTerm Received")
-			controller.ShutdownInternalHttpServer("SigTerm received")
 			grpc.StopGrpcServer()
 		} else if execArgument.Execution == EXECUTION_TYPE_DISPATCHER {
 			grpc.StopGrprClientConnection()
@@ -108,6 +106,8 @@ func mainDispatcher() {
 	log.Infoln("Starting Cache")
 	cache.Start(false, dispatcher.PubSubHandler)
 	go grpc.StartGrpcClientConnection(args.GrpcServerPort)
+	evm.SubscribeToEVMEvents(config.Config.Evm.Chains[config.CHAIN_ARB])
+
 }
 func mainBridge() {
 	log.Infof("Begin service as Bridge")
@@ -117,10 +117,9 @@ func mainBridge() {
 	cache.Start(true, nil)
 
 	go controller.SetupRestServer(args.Port)
-	go controller.SetupInternalRestServer(args.InternalPort)
+	go grpc.StartGrpcServer(args.GrpcServerPort)
 
 	log.Infoln("Telegram Vottun Dojo Up'n'Ready.")
-	go grpc.StartGrpcServer(args.GrpcServerPort)
 
 }
 

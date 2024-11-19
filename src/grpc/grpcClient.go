@@ -44,9 +44,7 @@ func ProcessQubicOrder(order *dto.OrderReceivedDTO) {
 	grpcOrder.OrderID = order.OrderID
 	grpcOrder.Amount = order.Amount
 	grpcOrder.DestinationAccount = order.DestinationAccount
-	grpcOrder.Memo = order.Memo
 	grpcOrder.OriginAccount = order.OriginAccount
-	grpcOrder.SourceChain = order.SourceChain
 
 	result, err := serviceConnection.ProcessQubicOrder(grpcClientContext, grpcOrder)
 	if err != nil {

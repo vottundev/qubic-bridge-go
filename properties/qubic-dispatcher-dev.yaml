@@ -1,6 +1,18 @@
-internal-endpoints:
-  host: http://localhost:2126/internalbridge/v1
-  process-order: /order
+evm:
+  infura-key: ENC(a867f50be7703c5f04b3789015ee261f14ea17aa715d4e09798cce01652d418f60db6b5890087640ff99c1a27294a139e877807057a04460aa48b0da57888ced924591199e574df6)
+  chains:
+    ETH:
+      chain-id: 11155111
+      name: Ethereum Sepolia
+      rpc: https://sepolia.infura.io/v3/
+      wss: wss://sepolia.infura.io/ws/v3/
+      contract-address: 0xf04A563C5762D05B428Cf5FF05932D4baF9d0Bc8
+    ARB:
+      chain-id: 421614
+      name: Arbitrum Sepolia
+      rpc: https://arbitrum-sepolia.infura.io/v3/
+      wss: wss://arbitrum-sepolia.infura.io/ws/v3/
+      contract-address: 0xf04A563C5762D05B428Cf5FF05932D4baF9d0Bc8
 grpc:
   server: localhost
 cache:

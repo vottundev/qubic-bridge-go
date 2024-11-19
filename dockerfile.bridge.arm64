@@ -11,23 +11,26 @@ COPY ./src .
 RUN go mod download
 
 # Build the application
-RUN go build -o qubic-dispatcher .
+RUN go build -o qubic-bridge .
 
 # Stage 2: Create the final image
 FROM alpine:latest
 
 # Set environment variables for configuration
-ENV PROPERTIES_DIR=/opt/qubic-dispatcher/properties
+ENV PROPERTIES_DIR=/opt/qubic-bridge/properties
 ENV BRIDGE_SECRET=${SECRET}
 
 # Create directories for properties and keys
 RUN mkdir -p ${PROPERTIES_DIR}
 
 # Copy the compiled application from the builder stage
-COPY --from=builder /app/qubic-dispatcher /app/qubic-dispatcher
+COPY --from=builder /app/qubic-bridge /app/qubic-bridge
 
 # Copy property and key files to the container
-COPY ./properties/qubic-dispatcher-docker-dev.yaml /opt/qubic-dispatcher/properties/qubic-dispatcher-docker-dev.yaml
+COPY ./properties/qubic-bridge-docker-dev.yaml ${PROPERTIES_DIR}/qubic-bridge-docker-dev.yaml
+
+# Expose the ports the application listens on
+EXPOSE 2116 2126 50051 
 
 # Run the application
-CMD ["/app/qubic-dispatcher", "--yaml=/opt/qubic-dispatcher/properties/qubic-dispatcher-docker-dev.yaml", "-l=TRACE", "-s=true", "--launch=dispatcher", "--grpc-server-port=50051"]
+CMD ["/app/qubic-bridge", "--yaml=/opt/qubic-bridge/properties/qubic-bridge-docker-dev.yaml", "-p=2116", "-i=2126", "-l=TRACE", "-s=true", "--launch=bridge", "--grpc-server-port=50051"]
