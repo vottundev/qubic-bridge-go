@@ -41,16 +41,6 @@ func SubscribeToEVMEvents(chainInfo config.ChainInfo) error {
 		return errors.New(constants.ErrorParsingAbi, fmt.Sprintf("Failed parsing contract ABI EVM orders contract%+v", err))
 	}
 
-	abiContract := AbiContract{}
-	err = abiContract.LoadAbiFromSpecs(assets.TestEvent)
-	if err != nil {
-		log.Errorf("Error loading abi methods: %+v", err)
-		return errors.New(constants.ErrorParsingAbi, fmt.Sprintf("Error loading abi methods: %+v", err))
-
-	}
-
-	abiContract.ProcessMethodsForSubscription()
-
 	//1. get client to get gas price from the blockchain
 	evmClient, err := getEthereumClient(&chainInfo, true)
 	if err != nil {
