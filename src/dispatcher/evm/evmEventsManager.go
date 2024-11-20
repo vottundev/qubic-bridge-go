@@ -37,7 +37,7 @@ func SubscribeToEVMEvents(chainInfo config.ChainInfo) error {
 
 	parsedAbi, err = abi.JSON(bytes.NewReader(assets.TestEvent))
 	if err != nil {
-		log.Errorf("Failed parsing contract ABI EVM orders contract%+v", err)
+		log.Errorf("Failed parsing contract ABI EVM orders contract: %+v", err)
 		return errors.New(constants.ErrorParsingAbi, fmt.Sprintf("Failed parsing contract ABI EVM orders contract%+v", err))
 	}
 
