@@ -16,6 +16,7 @@ type ChainType string
 const (
 	CHAIN_ETH ChainType = "ETH"
 	CHAIN_ARB ChainType = "ARB"
+	CHAIN_POL ChainType = "POL"
 )
 
 type ChainsMap map[ChainType]ChainInfo
@@ -26,6 +27,24 @@ type ChainInfo struct {
 	RpcUrl          string          `yaml:"rpc"`
 	WssUrl          string          `yaml:"wss"`
 	ContractAddress *common.Address `yaml:"contract-address"`
+	Key             string          `yaml:"key"`
+}
+
+func (m ChainsMap) ChainInfo(chain ChainType) *ChainInfo {
+
+	var key string
+	r := m[chain]
+
+	if r.Key == "infura" {
+		key = GetEncryptedProperty(Config.Evm.InfuraKey)
+	} else {
+		key = GetEncryptedProperty(Config.Evm.QuicknodeKey)
+	}
+
+	r.RpcUrl = r.RpcUrl + key
+	r.WssUrl = r.WssUrl + key
+
+	return &r
 }
 
 type CacheInfo struct {
@@ -47,8 +66,9 @@ type config struct {
 		AllowedHeaders []string `yaml:"allowed-headers"`
 	} `yaml:"cors"`
 	Evm struct {
-		InfuraKey string    `yaml:"infura-key"`
-		Chains    ChainsMap `yaml:"chains"`
+		InfuraKey    string    `yaml:"infura-key"`
+		QuicknodeKey string    `yaml:"quicknode-key"`
+		Chains       ChainsMap `yaml:"chains"`
 	} `yaml:"evm"`
 	Jwt struct {
 		PublicKey             string `yaml:"public-key"`

@@ -106,7 +106,8 @@ func mainDispatcher() {
 	log.Infoln("Starting Cache")
 	cache.Start(false, dispatcher.PubSubHandler)
 	go grpc.StartGrpcClientConnection(args.GrpcServerPort)
-	evm.SubscribeToEVMEvents(config.Config.Evm.Chains[config.CHAIN_ARB])
+	go evm.SubscribeToEVMEvents(config.Config.Evm.Chains.ChainInfo(config.CHAIN_ARB))
+	go evm.SubscribeToEVMEvents(config.Config.Evm.Chains.ChainInfo(config.CHAIN_POL))
 
 }
 func mainBridge() {

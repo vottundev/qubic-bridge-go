@@ -16,17 +16,29 @@ cors:
     - "*"
 evm:
   infura-key: ENC(a867f50be7703c5f04b3789015ee261f14ea17aa715d4e09798cce01652d418f60db6b5890087640ff99c1a27294a139e877807057a04460aa48b0da57888ced924591199e574df6)
+  quicknode-key: ENC(5ab8a59e5af8304bf2f9dc994fdaf9a4ed1eab874c7f8d7eb1e548713c2cb3aa3a0d343c804f5ae74506c04dc564a8277ac0bd8952c0731408f0b9b536ab8b9bc68a3f2971293745921b5df844194a66)
   chains:
     ETH:
       chain-id: 11155111
       name: Ethereum Sepolia
       rpc: https://sepolia.infura.io/v3/
       wss: wss://sepolia.infura.io/ws/v3/
+      contract-address: 0x6B432f20ab46B0B63871D1e9B577B5d52D91a1A9
+      key: infura
     ARB:
       chain-id: 421614
       name: Arbitrum Sepolia
       rpc: https://arbitrum-sepolia.infura.io/v3/
       wss: wss://arbitrum-sepolia.infura.io/ws/v3/
+      contract-address: 0xf04A563C5762D05B428Cf5FF05932D4baF9d0Bc8
+      key: infura
+    POL:
+      chain-id: 80002
+      name: Amoy Testnet
+      rpc: https://methodical-blue-yard.matic-amoy.quiknode.pro/
+      wss: wss://methodical-blue-yard.matic-amoy.quiknode.pro/
+      contract-address: 0x8f1858fc56F4dff5beC5C679d0E8e2754DfFf34C
+      key: quicknode
 mysql:
   host: localhost
   port: 3306
