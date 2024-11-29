@@ -63,6 +63,7 @@ func SubscribeToEVMEvents(chainInfo *config.ChainInfo) {
 			case err := <-errChan:
 				log.Errorf("%+v ************************************************************************************************************************", err)
 				go SubscribeToEVMEvents(chainInfo)
+				break
 			case info := <-logs:
 				err := processLog(info)
 				if err != nil {
